@@ -4,11 +4,12 @@ import com.systemgym.systemgym.dto.request.CreateSubscriptionDTO;
 import com.systemgym.systemgym.dto.response.ResponseSubscriptionDTO;
 import com.systemgym.systemgym.mapper.SubscriptionMapper;
 import com.systemgym.systemgym.model.*;
-import com.systemgym.systemgym.repository.IPartnerRepository;
-import com.systemgym.systemgym.repository.IPlanRepository;
 import com.systemgym.systemgym.repository.ISubscriptionRepository;
+import com.systemgym.systemgym.service.IPartnerService;
+import com.systemgym.systemgym.service.IPlanService;
 import com.systemgym.systemgym.service.ISubscriptionService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,38 +19,35 @@ import java.util.UUID;
 public class SubscriptionServiceImpl implements ISubscriptionService {
 
     private final ISubscriptionRepository iSubscriptionRepository;
-    private final IPlanRepository iPlanRepository;
-    private final IPartnerRepository iPartnerRepository;
+    private final IPlanService iPlanService;
+    private final IPartnerService iPartnerService;
     private final SubscriptionMapper subscriptionMapper;
 
-    public SubscriptionServiceImpl(ISubscriptionRepository iSubscriptionRepository, IPlanRepository iPlanRepository, IPartnerRepository iPartnerRepository, SubscriptionMapper subscriptionMapper) {
+    public SubscriptionServiceImpl(ISubscriptionRepository iSubscriptionRepository, IPlanService iPlanService, SubscriptionMapper subscriptionMapper, IPartnerService iPartnerService) {
         this.iSubscriptionRepository = iSubscriptionRepository;
-        this.iPlanRepository = iPlanRepository;
-        this.iPartnerRepository = iPartnerRepository;
+        this.iPlanService = iPlanService;
         this.subscriptionMapper = subscriptionMapper;
+        this.iPartnerService = iPartnerService;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResponseSubscriptionDTO saveSubscription(CreateSubscriptionDTO createSubscriptionDTO) throws Exception{
 
-        //Validar si el id partner es válido
-        if(createSubscriptionDTO.idPartner()==null || createSubscriptionDTO.idPartner()<=0){
-            throw new Exception("El id Partner ingresado es inválido");
-        }
-
         //Validar si el id plan es válido
-        if(createSubscriptionDTO.idPlan()==null || createSubscriptionDTO.idPlan().equals(new UUID(0L, 0L))){
+        if(createSubscriptionDTO.idPlan().equals(new UUID(0L, 0L))){
             throw new Exception("El id Plan ingresado es inválido");
         }
 
         //Obtener el objeto de partner y plan ingresados
-        Partner objPartner = iPartnerRepository.findById(createSubscriptionDTO.idPartner()).orElseThrow(() -> new Exception("El id Partner ingresado no existe"));
-        Plan objPlan = iPlanRepository.findById(createSubscriptionDTO.idPlan()).orElseThrow(() -> new Exception("El id Plan ingresado no existe"));
+        //Al estar dentro de un metodo @Transactional, estos objetos son guardados en el contexto de Persistencia
+        Partner objPartner = iPartnerService.findByIdPartnerEntity(createSubscriptionDTO.idPartner());
+        Plan objPlan = iPlanService.findByIdPlanEntity(createSubscriptionDTO.idPlan());
 
         //Convertir el request a entidad
         Subscription objSubscription = subscriptionMapper.convertRequestToEntity(createSubscriptionDTO);
 
-        //Setear valores de manera manual pq son datos que nacen por defecto del sistema, no del request del usuario
+        //Setear valores de manera manual para el objeto de suscripcion pq son datos que nacen por defecto del sistema, no del request del usuario
         objSubscription.setStartDate(LocalDateTime.now());
         objSubscription.setEndDate(objSubscription.getStartDate().plusDays(objPlan.getDuration().getDurationDays()));
         objSubscription.setStatusSubscription(StatusSubscription.ACTIVE);
@@ -61,6 +59,13 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
 
         //Guardar objeto susbscription en la bd
         iSubscriptionRepository.save(objSubscription);
+
+        //Como ya se creó la sub, proceder a actualizar el estado del socio
+        //Podemos hacer el cambio de estado sin necesidad de un save debido a que el objPartner se encuentra en el contexto de Persistencia
+        //El Contexto de Persistencia es una caja fuerte temporal donde JPA guarda todas las entidades que has recuperado de la base de datos durante una transacción
+        //A partir de ese momento, JPA "vigila" ese objeto. Cualquier cambio que le hagas a las propiedades de ese objeto es detectado automáticamente por JPA.
+        //Si hay diferencias, JPA genera y ejecuta los UPDATE de SQL automáticamente por ti.
+        objPartner.setActive(true);
 
         return subscriptionMapper.convertEntityToResponseDto(objSubscription);
     }

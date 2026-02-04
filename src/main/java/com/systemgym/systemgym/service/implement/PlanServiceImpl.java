@@ -5,6 +5,7 @@ import com.systemgym.systemgym.dto.request.UpdatePlanDTO;
 import com.systemgym.systemgym.dto.response.ResponsePlanDTO;
 import com.systemgym.systemgym.mapper.PlanMapper;
 import com.systemgym.systemgym.model.Duration;
+import com.systemgym.systemgym.model.Partner;
 import com.systemgym.systemgym.model.Plan;
 import com.systemgym.systemgym.repository.IDurationRepository;
 import com.systemgym.systemgym.repository.IPlanRepository;
@@ -80,4 +81,12 @@ public class PlanServiceImpl implements IPlanService {
 
         return responsePlanDTOS;
     }
+
+    //Metodo para poder retornar una entidad por id (Metodo de uso para otros servicios en casos de persistencia)
+    @Override
+    public Plan findByIdPlanEntity(UUID id) throws Exception {
+        Plan objPlanEntity = iPlanRepository.findById(id).orElseThrow(() -> new Exception("Plan not found"));
+        return objPlanEntity;
+    }
+
 }

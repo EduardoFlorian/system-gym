@@ -29,7 +29,7 @@ public class PartnerServiceImpl implements IPartnerService {
         Partner partnerEntity = partnerMapper.convertRequestToEntity(createPartnerDTO);
 
         partnerEntity.setRegistrationDate(LocalDateTime.now());
-        partnerEntity.setActive(true);
+        partnerEntity.setActive(false);
 
         iPartnerRepository.save(partnerEntity);
 
@@ -69,5 +69,12 @@ public class PartnerServiceImpl implements IPartnerService {
         List<ResponsePartnerDTO> listPartnersDTO = listPartnersEntity.stream().map(e-> partnerMapper.convertEntityToResponseDto(e)).toList();
 
         return  listPartnersDTO;
+    }
+
+    //Metodo para poder retornar una entidad por id (Metodo de uso para otros servicios en casos de persistencia)
+    @Override
+    public Partner findByIdPartnerEntity(Integer id) throws Exception {
+        Partner objPartnerEntity = iPartnerRepository.findById(id).orElseThrow(() -> new Exception("Partner not found"));
+        return objPartnerEntity;
     }
 }
