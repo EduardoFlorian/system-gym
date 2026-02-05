@@ -2,6 +2,7 @@ package com.systemgym.systemgym.service.implement;
 
 import com.systemgym.systemgym.dto.request.CreateSubscriptionDTO;
 import com.systemgym.systemgym.dto.response.ResponseSubscriptionDTO;
+import com.systemgym.systemgym.exception.ResourceNotFoundException;
 import com.systemgym.systemgym.mapper.SubscriptionMapper;
 import com.systemgym.systemgym.model.*;
 import com.systemgym.systemgym.repository.ISubscriptionRepository;
@@ -33,11 +34,6 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResponseSubscriptionDTO saveSubscription(CreateSubscriptionDTO createSubscriptionDTO) throws Exception{
-
-        //Validar si el id plan es válido
-        if(createSubscriptionDTO.idPlan().equals(new UUID(0L, 0L))){
-            throw new Exception("El id Plan ingresado es inválido");
-        }
 
         //Obtener el objeto de partner y plan ingresados
         //Al estar dentro de un metodo @Transactional, estos objetos son guardados en el contexto de Persistencia
@@ -73,7 +69,7 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
     @Override
     public ResponseSubscriptionDTO getSubscriptionById(Integer id) throws Exception{
 
-        Subscription subscriptionEntity = iSubscriptionRepository.findById(id).orElseThrow(() -> new Exception("Subscription not found"));
+        Subscription subscriptionEntity = iSubscriptionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Subscription not found"));
 
         return subscriptionMapper.convertEntityToResponseDto(subscriptionEntity);
 

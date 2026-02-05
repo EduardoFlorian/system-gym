@@ -2,6 +2,7 @@ package com.systemgym.systemgym.service.implement;
 
 import com.systemgym.systemgym.dto.request.CreateInscriptionDTO;
 import com.systemgym.systemgym.dto.response.ResponseInscriptionDTO;
+import com.systemgym.systemgym.exception.ResourceNotFoundException;
 import com.systemgym.systemgym.mapper.InscriptionMapper;
 import com.systemgym.systemgym.model.Activity;
 import com.systemgym.systemgym.model.Inscription;
@@ -14,7 +15,6 @@ import com.systemgym.systemgym.service.IInscriptionService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -35,18 +35,9 @@ public class InscriptionServiceImpl implements IInscriptionService {
     @Override
     public ResponseInscriptionDTO saveInscription(CreateInscriptionDTO createInscriptionDTO) throws Exception {
 
-        //Validamos si los ids enviamos de los objetos complejos son validos
-        if (createInscriptionDTO.idPartner()==null || createInscriptionDTO.idPartner()<=0 ) {
-            throw new Exception("El idPartner ingresado no es válido");
-        }
-
-        if (createInscriptionDTO.idActivity()==null || createInscriptionDTO.idActivity()<=0 ) {
-            throw new Exception("El idActivity ingresado no es válido");
-        }
-
         //Obtenemos el objeto de cada id de objeto complejo obtenido
-        Partner partner = partnerRepository.findById(createInscriptionDTO.idPartner()).orElseThrow(() -> new Exception("El idPartner ingresado no existe"));
-        Activity activity = activityRepository.findById(createInscriptionDTO.idActivity()).orElseThrow(() -> new Exception("El idActivity ingresado no existe"));
+        Partner partner = partnerRepository.findById(createInscriptionDTO.idPartner()).orElseThrow(() -> new ResourceNotFoundException("El idPartner ingresado no existe"));
+        Activity activity = activityRepository.findById(createInscriptionDTO.idActivity()).orElseThrow(() -> new ResourceNotFoundException("El idActivity ingresado no existe"));
 
         //Convertir a entidad el request
         Inscription inscription = inscriptionMapper.convertRequestToEntity(createInscriptionDTO);
@@ -68,7 +59,7 @@ public class InscriptionServiceImpl implements IInscriptionService {
     @Override
     public ResponseInscriptionDTO findInscriptionById(Integer id) throws Exception {
 
-        Inscription inscription = inscriptionRepository.findById(id).orElseThrow(() -> new Exception("Inscription not found"));
+        Inscription inscription = inscriptionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Inscription not found"));
 
         return inscriptionMapper.convertEntityToResponseDTO(inscription);
     }

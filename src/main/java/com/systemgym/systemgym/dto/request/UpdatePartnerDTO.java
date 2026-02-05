@@ -23,10 +23,7 @@ public record UpdatePartnerDTO(
     @NotNull(message = "El campo phoneNumber no puede ser nulo")
     @Size(min = 9, max = 9, message = "El campo telefono debe contener 9 caracteres")
     @Pattern(regexp = "^9[0-9]{8}$", message = "El telefono debe empezar con el dígito 9 para ser válido")
-    String phoneNumber,
-
-    @NotNull
-    boolean active
+    String phoneNumber
 
 ) {
 }

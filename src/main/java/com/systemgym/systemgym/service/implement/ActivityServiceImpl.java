@@ -3,6 +3,7 @@ package com.systemgym.systemgym.service.implement;
 import com.systemgym.systemgym.dto.request.CreateActivityDTO;
 import com.systemgym.systemgym.dto.request.UpdateActivityDTO;
 import com.systemgym.systemgym.dto.response.ResponseActivityDTO;
+import com.systemgym.systemgym.exception.ResourceNotFoundException;
 import com.systemgym.systemgym.mapper.ActivityMapper;
 import com.systemgym.systemgym.model.Activity;
 import com.systemgym.systemgym.model.Trainer;
@@ -29,11 +30,7 @@ public class ActivityServiceImpl implements IActivityService {
     @Override
     public ResponseActivityDTO saveActivity(CreateActivityDTO createActivityDTO) throws Exception {
 
-        if(createActivityDTO.idTrainer()==null || createActivityDTO.idTrainer()<=0){
-            throw new Exception("El id trainer ingresado es inválido");
-        }
-
-        Trainer objTrainer = iTrainerRepository.findById(createActivityDTO.idTrainer()).orElseThrow(() ->new Exception("El id trainer no existe"));
+        Trainer objTrainer = iTrainerRepository.findById(createActivityDTO.idTrainer()).orElseThrow(() ->new ResourceNotFoundException("El id trainer no existe"));
 
         Activity activityEntity = activityMapper.convertRequestToEntity(createActivityDTO);
 
@@ -48,13 +45,9 @@ public class ActivityServiceImpl implements IActivityService {
     @Override
     public ResponseActivityDTO updateActivity(Integer id, UpdateActivityDTO updateActivityDTO) throws Exception {
 
-        Activity objActivity = iActivityRepository.findById(id).orElseThrow(() ->new Exception("La actividad ingresada no existe"));
+        Activity objActivity = iActivityRepository.findById(id).orElseThrow(() ->new ResourceNotFoundException("La actividad ingresada no existe"));
 
-        if(updateActivityDTO.idTrainer()==null || updateActivityDTO.idTrainer()<=0){
-            throw new Exception("El id trainer ingresado es inválido");
-        }
-
-        Trainer objTrainer = iTrainerRepository.findById(updateActivityDTO.idTrainer()).orElseThrow(() ->new Exception("El id trainer no existe"));
+        Trainer objTrainer = iTrainerRepository.findById(updateActivityDTO.idTrainer()).orElseThrow(() ->new ResourceNotFoundException("El id trainer no existe"));
 
         objActivity.setCapacity(updateActivityDTO.capacity());
         objActivity.setDescription(updateActivityDTO.description());
@@ -72,7 +65,7 @@ public class ActivityServiceImpl implements IActivityService {
     @Override
     public ResponseActivityDTO findActivityById(Integer id) throws Exception {
 
-        Activity activityObj = iActivityRepository.findById(id).orElseThrow(()-> new Exception("Actividad no encontrada"));
+        Activity activityObj = iActivityRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Actividad no encontrada"));
 
         return activityMapper.convertEntityToResponseDTO(activityObj);
     }

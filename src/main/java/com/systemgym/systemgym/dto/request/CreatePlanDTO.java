@@ -23,6 +23,7 @@ public record CreatePlanDTO(
         Double price,
 
         @NotNull
+        @Min(value = 1,message = "El idDuration debe ser mayor a 0")
         Integer idDuration
 
 ) {

@@ -1,9 +1,6 @@
 package com.systemgym.systemgym.dto.request;
 
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -32,6 +29,7 @@ public record UpdateActivityDTO(
         LocalDate endDate,
 
         @NotNull(message = "El campo idTrainer no puede ser nulo")
+        @Min(value = 1, message = "El idTrainer debe ser mayor a 0")
         Integer idTrainer
 
 

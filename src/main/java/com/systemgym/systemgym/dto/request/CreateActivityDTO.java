@@ -33,6 +33,7 @@ public record CreateActivityDTO (
              LocalDate endDate,
 
              @NotNull(message = "El campo idTrainer no puede ser nulo")
+             @Min(value = 1, message = "El idTrainer debe ser mayor a 0")
              Integer idTrainer
         
 ) {
