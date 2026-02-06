@@ -2,6 +2,7 @@ package com.systemgym.systemgym.service.implement;
 
 import com.systemgym.systemgym.dto.request.CreateSubscriptionDTO;
 import com.systemgym.systemgym.dto.response.ResponseSubscriptionDTO;
+import com.systemgym.systemgym.exception.RecordAlreadyExistsException;
 import com.systemgym.systemgym.exception.ResourceNotFoundException;
 import com.systemgym.systemgym.mapper.SubscriptionMapper;
 import com.systemgym.systemgym.model.*;
@@ -40,6 +41,13 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
         Partner objPartner = iPartnerService.findByIdPartnerEntity(createSubscriptionDTO.idPartner());
         Plan objPlan = iPlanService.findByIdPlanEntity(createSubscriptionDTO.idPlan());
 
+        //Validar si el usuario ingresado cuenta con alguna suscripcion activa
+        iSubscriptionRepository.findByPartner(objPartner)
+                .stream()
+                .filter(e->e.getStatusSubscription()==StatusSubscription.ACTIVE)
+                .findFirst()
+                .ifPresent(e-> {throw new RecordAlreadyExistsException("El socio cuenta con una subscripción activa. No puede asociarse a una nueva hasta que esta culmine y/o cancele la actual");});
+
         //Convertir el request a entidad
         Subscription objSubscription = subscriptionMapper.convertRequestToEntity(createSubscriptionDTO);
 
@@ -64,6 +72,7 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
         objPartner.setActive(true);
 
         return subscriptionMapper.convertEntityToResponseDto(objSubscription);
+
     }
 
     @Override

@@ -31,4 +31,13 @@ public class GlobalExceptionHandler {
 
     }
 
+    //Excepcion personalizada para cuando ya existe un registro y no se puede crear uno nuevo por regla de negocio
+    @ExceptionHandler(RecordAlreadyExistsException.class)
+    public ResponseEntity<CustomErrorResponse> handleRecordAlreadyExistsException (Exception exception, WebRequest webRequest){
+
+        CustomErrorResponse customErrorResponse = new CustomErrorResponse(LocalDateTime.now(),exception.getMessage(),webRequest.getDescription(false));
+
+        return new ResponseEntity<>(customErrorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
 }
