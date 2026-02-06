@@ -11,5 +11,4 @@ public interface ISubscriptionService {
     ResponseSubscriptionDTO saveSubscription(CreateSubscriptionDTO createSubscriptionDTO) throws Exception;
     ResponseSubscriptionDTO getSubscriptionById(Integer id) throws Exception;
     List<ResponseSubscriptionDTO> findAllSubscriptions() throws Exception;
-    
 }
