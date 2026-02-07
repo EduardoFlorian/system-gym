@@ -22,7 +22,9 @@ public class SubscriptionTask {
     }
 
     //Funcion para pasar a Expirada una suscripcion vencida y a la ves pasar a inactive el estado del socio.
-    @Scheduled(fixedRate = 5000)
+
+    @Scheduled(cron = "0 0 0 * * *") //- Se ejecuta todos los días a la medianoche "0 0 0 * * *" significa: segundo 0, minuto 0, hora 0
+    //@Scheduled(fixedRate = 5000) //Se ejecuta cada 5 segundos (Para pruebas)
     @Transactional
     public void expiredSubscriptions() {
 

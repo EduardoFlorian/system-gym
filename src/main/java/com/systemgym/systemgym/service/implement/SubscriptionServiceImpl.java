@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -92,4 +93,38 @@ public class SubscriptionServiceImpl implements ISubscriptionService {
 
         return subscriptionDTOList;
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void cancelSubscription(Integer idPartner, Integer idSubscription) throws Exception {
+
+        //Validar parametros si son validos
+        if(idPartner==null || idPartner<=0){
+            throw new ResourceNotFoundException("El idPartner es inválido. El valor enviado no debe ser nulo y debe ser un número entero");
+        }
+        if(idSubscription==null || idSubscription<=0){
+            throw new ResourceNotFoundException("El idSubscription es inválido. El valor enviado no debe ser nulo y debe ser un número entero");
+        }
+
+        //Obtener objetos tanto del partner como de la suscripcion mediante los parametros enviados
+        Partner objPartner = iPartnerService.findByIdPartnerEntity(idPartner);
+        Subscription objSubscription = iSubscriptionRepository.findById(idSubscription).orElseThrow(() -> new ResourceNotFoundException("La subscripcion ingresada no existe"));
+
+        //Validar si la suscripcion enviada por el usuario está activa y ademas si pertenece al partner enviado.
+        if(objSubscription.getStatusSubscription()==StatusSubscription.ACTIVE){
+
+            if(objSubscription.getPartner().getId()==objPartner.getId()){
+                objSubscription.setStatusSubscription(StatusSubscription.CANCELLED);
+                objPartner.setActive(false);
+            }
+            else {
+                throw new Exception("La suscripcion enviada no pertenece al usuario enviado");
+            }
+        }
+        else{
+            throw new Exception("La suscripcion enviada no se encuentra activa");
+        }
+
+    }
+
 }
