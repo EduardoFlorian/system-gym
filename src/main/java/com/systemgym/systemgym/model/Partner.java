@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -34,5 +36,8 @@ public class Partner {
 
     @Column(nullable = false)
     private boolean active;
+
+    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
+    private List<Inscription> inscripciones = new ArrayList<>();
 
 }
