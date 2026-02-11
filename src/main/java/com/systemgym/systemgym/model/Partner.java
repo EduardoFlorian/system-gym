@@ -37,7 +37,4 @@ public class Partner {
     @Column(nullable = false)
     private boolean active;
 
-    @OneToMany(mappedBy = "partner", cascade = CascadeType.ALL)
-    private List<Inscription> inscripciones = new ArrayList<>();
-
 }
