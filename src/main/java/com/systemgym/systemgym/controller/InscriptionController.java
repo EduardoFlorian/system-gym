@@ -2,13 +2,14 @@ package com.systemgym.systemgym.controller;
 
 import com.systemgym.systemgym.dto.request.CreateInscriptionDTO;
 import com.systemgym.systemgym.dto.response.ResponseInscriptionDTO;
+import com.systemgym.systemgym.model.Inscription;
 import com.systemgym.systemgym.service.IInscriptionService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/inscriptions")
@@ -21,20 +22,7 @@ public class InscriptionController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<ResponseInscriptionDTO> save(@Valid @RequestBody CreateInscriptionDTO createInscriptionDTO) throws Exception {
-
+    public ResponseEntity<ResponseInscriptionDTO> save(@RequestBody CreateInscriptionDTO createInscriptionDTO) throws Exception {
         return ResponseEntity.status(HttpStatus.CREATED).body(inscriptionService.saveInscription(createInscriptionDTO));
     }
-
-    @GetMapping("/find/{id}")
-    public ResponseEntity<ResponseInscriptionDTO> findById(@PathVariable Integer id) throws Exception {
-
-        return ResponseEntity.ok().body(inscriptionService.findInscriptionById(id));
-    }
-
-    @GetMapping("/list")
-    public ResponseEntity<List<ResponseInscriptionDTO>> listInscriptions() throws  Exception {
-        return ResponseEntity.ok(inscriptionService.findAllInscriptions());
-    }
-
 }

@@ -11,17 +11,18 @@ public class InscriptionMapper {
 
     private final ModelMapperConfig modelMapperConfig;
 
-    public InscriptionMapper(ModelMapperConfig modelMapperConfig, ModelMapperConfig modelMapperConfig1) {
-        this.modelMapperConfig = modelMapperConfig1;
+    public InscriptionMapper(ModelMapperConfig modelMapperConfig) {
+        this.modelMapperConfig = modelMapperConfig;
     }
 
-    //Convertir un request a entidad
-    public Inscription convertRequestToEntity(CreateInscriptionDTO createInscriptionDTO) {
-        return modelMapperConfig.getModelMapper().map(createInscriptionDTO, Inscription.class);
+    //Convertir un request DTO a entidad
+
+    public Inscription convertRequestToEntity(CreateInscriptionDTO createInscriptionDTO){
+        return modelMapperConfig.getModelMapper().map(createInscriptionDTO,Inscription.class);
     }
 
-    //Converir entidad a DTO
-    public ResponseInscriptionDTO convertEntityToResponseDTO(Inscription inscription) {
+    //Convertir Entidad a DTO
+    public ResponseInscriptionDTO convertEntityToResponseDto (Inscription inscription) {
         return ResponseInscriptionDTO.fromEntity(inscription);
     }
 
