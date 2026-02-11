@@ -73,7 +73,7 @@ public class PartnerServiceImpl implements IPartnerService {
 
     //Metodo para poder retornar una entidad por id (Metodo de uso para otros servicios en casos de persistencia)
     @Override
-    public Partner findByIdPartnerEntity(Integer id) throws Exception {
+    public Partner findByIdPartnerEntity(Integer id) throws ResourceNotFoundException {
         Partner objPartnerEntity = iPartnerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Partner not found"));
         return objPartnerEntity;
     }

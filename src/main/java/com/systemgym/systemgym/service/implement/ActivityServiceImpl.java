@@ -6,6 +6,7 @@ import com.systemgym.systemgym.dto.response.ResponseActivityDTO;
 import com.systemgym.systemgym.exception.ResourceNotFoundException;
 import com.systemgym.systemgym.mapper.ActivityMapper;
 import com.systemgym.systemgym.model.Activity;
+import com.systemgym.systemgym.model.Partner;
 import com.systemgym.systemgym.model.Trainer;
 import com.systemgym.systemgym.repository.IActivityRepository;
 import com.systemgym.systemgym.repository.ITrainerRepository;
@@ -78,5 +79,12 @@ public class ActivityServiceImpl implements IActivityService {
 
         return responseActivityDTOs;
 
+    }
+
+    @Override
+    public Activity findByIdActivityEntity(Integer id) throws ResourceNotFoundException {
+        Activity activityObj = iActivityRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("Actividad no encontrada"));
+
+        return  activityObj;
     }
 }
