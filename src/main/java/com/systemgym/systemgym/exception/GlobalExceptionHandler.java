@@ -40,4 +40,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(customErrorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
+    //Excepcion personalizada para cuando se infringe una regla de negocio
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<CustomErrorResponse> handleBussinessException (Exception exception, WebRequest webRequest){
+
+        CustomErrorResponse customErrorResponse = new CustomErrorResponse(LocalDateTime.now(),exception.getMessage(),webRequest.getDescription(false));
+
+        return new ResponseEntity<>(customErrorResponse, HttpStatus.FORBIDDEN); //Retorna 403
+    }
+
 }
