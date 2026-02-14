@@ -28,15 +28,6 @@ public class Activity {
     @Column(nullable = false, length = 150)
     private String description;
 
-    @Column(nullable = false, length = 30)
-    private String schedule;
-
-    @Column(nullable = false)
-    private LocalTime startTime;
-
-    @Column(nullable = false)
-    private LocalTime endTime;
-
     @Column(nullable = false)
     private LocalDate startDate;
 
@@ -46,5 +37,8 @@ public class Activity {
     @ManyToOne
     @JoinColumn(name = "id_trainer", nullable = false, foreignKey = @ForeignKey(name = "fk_activity_trainer"))
     private Trainer trainer;
+
+    @OneToMany(mappedBy = "activity", cascade = CascadeType.ALL)
+    private List<Schedule> schedules;
 
 }
