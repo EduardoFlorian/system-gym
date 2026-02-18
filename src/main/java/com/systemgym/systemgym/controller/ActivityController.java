@@ -26,22 +26,4 @@ public class ActivityController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(iActivityService.saveActivity(createActivityDTO));
     }
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<ResponseActivityDTO>  updated (@PathVariable int id, @Valid @RequestBody UpdateActivityDTO updateActivityDTO) throws Exception {
-
-        return ResponseEntity.status(HttpStatus.OK).body(iActivityService.updateActivity(id, updateActivityDTO));
-    }
-
-    @GetMapping("/find/{id}")
-    public ResponseEntity<ResponseActivityDTO> findById(@PathVariable int id) throws Exception{
-
-        return ResponseEntity.ok(iActivityService.findActivityById(id));
-    }
-
-    @GetMapping("/list")
-    public ResponseEntity<List<ResponseActivityDTO>> listActivities() throws Exception{
-
-        return ResponseEntity.ok(iActivityService.findAllActivities());
-    }
 }

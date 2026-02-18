@@ -11,9 +11,6 @@ import java.util.List;
 public interface IActivityService {
 
     ResponseActivityDTO saveActivity (CreateActivityDTO createActivityDTO) throws Exception;
-    ResponseActivityDTO updateActivity (Integer id, UpdateActivityDTO updateActivityDTO) throws Exception;
-    ResponseActivityDTO findActivityById (Integer id) throws Exception;
-    List<ResponseActivityDTO> findAllActivities () throws Exception;
 
     //Metodo para poder retornar una entidad por id (Metodo de uso para otros servicios en casos de persistencia)
     Activity findByIdActivityEntity(Integer id) throws ResourceNotFoundException;

@@ -5,6 +5,7 @@ import com.systemgym.systemgym.model.Partner;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 public record ResponseActivityDTO(
 
@@ -14,17 +15,13 @@ public record ResponseActivityDTO(
 
         String description,
 
-        String schedule,
-
-        LocalTime startTime,
-
-        LocalTime endTime,
-
         LocalDate startDate,
 
         LocalDate endDate,
 
-        ResponseTrainerDTO trainer
+        ResponseTrainerDTO trainer,
+
+        List<ResponseScheduleDTO> schedules
 
 ) {
 
@@ -34,12 +31,10 @@ public record ResponseActivityDTO(
                 activity.getId(),
                 activity.getCapacity(),
                 activity.getDescription(),
-                activity.getSchedule(),
-                activity.getStartTime(),
-                activity.getEndTime(),
                 activity.getStartDate(),
                 activity.getEndDate(),
-                ResponseTrainerDTO.fromEntity(activity.getTrainer())
+                ResponseTrainerDTO.fromEntity(activity.getTrainer()),
+                activity.getSchedules().stream().map(e->ResponseScheduleDTO.fromEntity(e)).toList()
 
         );
     }

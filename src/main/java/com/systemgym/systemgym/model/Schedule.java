@@ -1,11 +1,11 @@
 package com.systemgym.systemgym.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Entity
@@ -16,11 +16,11 @@ public class Schedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private DayOfWeek dayOfWeek;
+    private DayOfWeek dayOfWeekSchedule;
 
     @Column(nullable = false)
     private LocalTime startTime;

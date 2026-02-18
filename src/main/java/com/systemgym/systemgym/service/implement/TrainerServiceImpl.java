@@ -63,4 +63,11 @@ public class TrainerServiceImpl implements ITrainerService {
         return responseTrainerDTOs;
 
     }
+
+    @Override
+    public Trainer findByIdTrainerEntity(Integer id) throws Exception {
+        Trainer objTrainer = itrainerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Trainer no encontrado"));
+
+        return objTrainer;
+    }
 }
