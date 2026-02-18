@@ -22,10 +22,8 @@ public class ActivityMapper {
     }
 
     //Convertir Entity a ResponseDTO
-    public ResponseActivityDTO  convertEntityToResponseDTO(Activity activity){
-        ResponseTrainerDTO trainerDTO = new ResponseTrainerDTO(activity.getTrainer().getId(),activity.getTrainer().getFirstName(),activity.getTrainer().getLastName(),activity.getTrainer().getSpecialty());
-        return new ResponseActivityDTO(activity.getId(),activity.getCapacity(),activity.getDescription(),activity.getSchedule(),activity.getStartTime(),activity.getEndTime(),activity.getStartDate(),activity.getEndDate(),trainerDTO);
+    public ResponseActivityDTO convertEntityToResponseDTO(Activity activity){
+        return  ResponseActivityDTO.fromEntity(activity);
     }
-
 }
 
