@@ -46,7 +46,7 @@ public class InscriptionServiceImpl implements IInscriptionService {
 
         //Validar si el usuario cuenta con una subscripcion activa
         if(partner.isActive()!=true){
-            throw new BusinessException("El socio no cuenta con una subscripción activa, por lo cual no puede inscribirse a ninguna actividad.");
+            throw new BusinessException("El socio no cuenta con una subscripción activa. No puede inscribirse a ninguna actividad.");
         }
 
         //Validar que los ids de actividades enviados en el dto no sean repetidos:
@@ -55,13 +55,23 @@ public class InscriptionServiceImpl implements IInscriptionService {
 
         //2. Comparamos el tamaño de la lista con ids unicos con la lista original del dto (createInscriptionDTO.details())
         if(actividadesUnicas.size()!= createInscriptionDTO.details().size()) {
-            throw new IllegalArgumentException("Estás ingresando alguna actividad mas de una vez. Solo te puedes inscribir en una actividad una sola ves y únicamente en un turno y horario.");
+            throw new IllegalArgumentException("Tu solicitud contiene actividades duplicadas. Solo te puedes inscribir en una actividad una sola ves");
         }
 
         //Verificar si la lista de ids de la lista actividadesUnicas existen en BD y alojarlo en un listado de objetos de tipo Activity
         List<Activity> activities = actividadesUnicas.stream()
                 .map(e -> activityService.findByIdActivityEntity(e))
                 .toList();
+
+        //3. Verificar si aún hay aforo disponible para cada Actividad que se desean inscribir
+        for(Activity activity : activities) {
+
+            Integer inscritosActuales = inscriptionDetailRepository.countParticipantsByActivityId(activity.getId());
+
+            if(inscritosActuales == activity.getCapacity()){
+                throw new BusinessException("La Actividad: " + activity.getDescription() + " ya alcanzó el límite de inscripciones. Aforo lleno." );
+            }
+        }
 
         //Pasar la solicitud Dto a Entidad
         Inscription objInscription = inscriptionMapper.convertRequestToEntity(createInscriptionDTO);
@@ -76,11 +86,11 @@ public class InscriptionServiceImpl implements IInscriptionService {
                 .map(activity -> {
                     InscriptionDetail detail = new InscriptionDetail();
                     detail.setActivity(activity);
-                    detail.setInscription(objInscription); //Seteamos el objeto de inscripcion necesario para la creacion  y relacion entre tablas
+                    detail.setInscription(objInscription); //Seteamos el objeto de inscripcion necesario para la creacion y relacion entre tablas
                     return detail;
                 }).toList();
 
-        // ----------- LOGICA DE VALIDACION DE HORARIOS -----------
+        // ----------- LOGICA DE VALIDACION DE ACTIVIDADES INSCRITAS -----------
 
         //1. Primero validar que las actividades de la nueva inscripcion no choque con inscripciones que el socio ya tenía registradas
         //El usuario cuenta con inscripciones vigentes?
@@ -116,8 +126,6 @@ public class InscriptionServiceImpl implements IInscriptionService {
                 }
             }
         }
-
-
 
         //Seteamos el listado de detalle a objInscription
         objInscription.setInscriptionDetails(details);
