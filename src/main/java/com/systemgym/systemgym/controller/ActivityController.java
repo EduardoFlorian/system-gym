@@ -1,15 +1,12 @@
 package com.systemgym.systemgym.controller;
 
 import com.systemgym.systemgym.dto.request.CreateActivityDTO;
-import com.systemgym.systemgym.dto.request.UpdateActivityDTO;
 import com.systemgym.systemgym.dto.response.ResponseActivityDTO;
 import com.systemgym.systemgym.service.IActivityService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/activities")

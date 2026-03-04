@@ -1,12 +1,9 @@
 package com.systemgym.systemgym.service;
 
 import com.systemgym.systemgym.dto.request.CreateActivityDTO;
-import com.systemgym.systemgym.dto.request.UpdateActivityDTO;
 import com.systemgym.systemgym.dto.response.ResponseActivityDTO;
 import com.systemgym.systemgym.exception.ResourceNotFoundException;
 import com.systemgym.systemgym.model.Activity;
-
-import java.util.List;
 
 public interface IActivityService {
 
