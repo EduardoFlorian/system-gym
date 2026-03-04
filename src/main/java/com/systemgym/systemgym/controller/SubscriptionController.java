@@ -40,9 +40,11 @@ public class SubscriptionController {
 
     @PostMapping("/cancel")
     //Marcamos el required como false ya que el service de por si ya hace la validacion de q el parametro no sea nulo o menor a 1
-    public void cancel(@RequestParam(value = "idPartner", required = false) Integer idPartner,@RequestParam(value = "idSubscription", required = false) Integer idSubscription) throws Exception {
+    public ResponseEntity<Void> cancel(@RequestParam(value = "idPartner", required = false) Integer idPartner,@RequestParam(value = "idSubscription", required = false) Integer idSubscription) throws Exception {
 
         subscriptionService.cancelSubscription(idPartner,idSubscription);
+
+        return ResponseEntity.noContent().build();
     }
 
 }
