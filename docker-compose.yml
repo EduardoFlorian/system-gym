@@ -1,0 +1,38 @@
+services:
+
+  postgres-system-gym:
+    image: postgres:16
+    container_name: postgres-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d system_gym"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  system-gym:
+    image: system-gym-app
+  # "build:." porque el dockerfile se encuentra en la misma carpeta y mismo nivel que el docker-compose-yml
+    build: .
+    mem_limit: 512m
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+    restart: always
+    depends_on:
+      postgres-system-gym:
+        condition: service_healthy
+
+volumes:
+  pgdata:
